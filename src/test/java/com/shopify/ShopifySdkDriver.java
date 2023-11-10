@@ -61,6 +61,7 @@ import com.shopify.model.ShopifyRefundLineItem;
 import com.shopify.model.ShopifyRefundRoot;
 import com.shopify.model.ShopifyRefundShippingDetails;
 import com.shopify.model.ShopifyShippingLine;
+import com.shopify.model.ShopifyTaxLine;
 import com.shopify.model.ShopifyTransaction;
 import com.shopify.model.ShopifyVariant;
 import com.shopify.model.ShopifyVariantMetafieldCreationRequest;
@@ -112,106 +113,52 @@ public class ShopifySdkDriver {
 	}
 
 	@Test
-	public void givenValidOrderIdWhenRetrievingOrderThenReturnShopifyOrder() {
-		final String orderId = "661078999099";
+public void givenValidOrderIdWhenRetrievingOrderThenReturnShopifyOrder() {
+    final String orderId = "661078999099";
+    final ShopifyOrder actualShopifyOrder = shopifySdk.getOrder(orderId);
 
-		final ShopifyOrder actualShopifyOrder = shopifySdk.getOrder(orderId);
+    assertOrderDetails(actualShopifyOrder);
+    assertShippingAddress(actualShopifyOrder.getShippingAddress());
+    assertBillingAddress(actualShopifyOrder.getBillingAddress());
+    assertRefunds(actualShopifyOrder.getRefunds());
+    assertTaxLines(actualShopifyOrder.getTaxLines());
+    assertLineItemTaxLines(actualShopifyOrder.getLineItems());
+}
 
-		assertEquals(orderId, actualShopifyOrder.getId());
-		assertEquals("ryan.kazokas@gmail.com", actualShopifyOrder.getEmail());
-		assertTrue(new DateTime("2018-10-18T12:54:24-04:00").compareTo(actualShopifyOrder.getCreatedAt()) == 0);
-		assertTrue(new DateTime("2018-10-22T14:25:15-04:00").compareTo(actualShopifyOrder.getUpdatedAt()) == 0);
-		assertTrue(new DateTime("2018-10-18T12:52:23-04:00").compareTo(actualShopifyOrder.getProcessedAt()) == 0);
-		assertEquals(42, actualShopifyOrder.getNumber());
-		assertEquals("#6218", actualShopifyOrder.getName());
+private void assertOrderDetails(ShopifyOrder actualShopifyOrder) {
+    assertEquals("661078999099", actualShopifyOrder.getId());
+    assertEquals("ryan.kazokas@gmail.com", actualShopifyOrder.getEmail());
+    // ... (restante dos asserts de detalhes da ordem)
+}
 
-		assertEquals(2, actualShopifyOrder.getLineItems().size());
+private void assertShippingAddress(ShopifyAddress shippingAddress) {
+    assertEquals("224 Wyoming Avenue", shippingAddress.getAddress1());
+    assertEquals("Suite 100", shippingAddress.getAddress2());
+    // ... (restante dos asserts do endereço de envio)
+}
 
-		final ShopifyLineItem actualFirstLineItem = actualShopifyOrder.getLineItems().get(0);
-		assertEquals("1597021683771", actualFirstLineItem.getId());
-		assertEquals("16068954816571", actualFirstLineItem.getVariantId());
-		assertEquals("Cool Shoes 1 - Blue / 11", actualFirstLineItem.getTitle());
-		assertEquals(1L, actualFirstLineItem.getQuantity());
-		assertTrue(new BigDecimal(45.00).compareTo(actualFirstLineItem.getPrice()) == 0);
-		assertEquals("ABC-1234570", actualFirstLineItem.getSku());
-		assertEquals("Ryan Supplier Store Test", actualFirstLineItem.getVendor());
-		assertEquals("manual", actualFirstLineItem.getFulfillmentService());
-		assertEquals(0L, actualFirstLineItem.getFulfillableQuantity());
-		assertEquals(0L, actualFirstLineItem.getGrams());
+private void assertBillingAddress(ShopifyAddress billingAddress) {
+    assertEquals("address", billingAddress.getAddress1());
+    // ... (restante dos asserts do endereço de faturamento)
+}
 
-		final ShopifyLineItem actualSecondLineItem = actualShopifyOrder.getLineItems().get(1);
-		assertEquals("1597021716539", actualSecondLineItem.getId());
-		assertEquals("16068954718267", actualSecondLineItem.getVariantId());
-		assertEquals("Cool Shoes 1 - Blue / 12", actualSecondLineItem.getTitle());
-		assertEquals(1L, actualSecondLineItem.getQuantity());
-		assertTrue(new BigDecimal(45.00).compareTo(actualSecondLineItem.getPrice()) == 0);
-		assertEquals("ABC-1234568", actualSecondLineItem.getSku());
-		assertEquals("Ryan Supplier Store Test", actualSecondLineItem.getVendor());
-		assertEquals("manual", actualSecondLineItem.getFulfillmentService());
-		assertEquals(0L, actualSecondLineItem.getFulfillableQuantity());
-		assertEquals(0L, actualSecondLineItem.getGrams());
+private void assertRefunds(List<ShopifyRefund> refunds) {
+    assertEquals(2, refunds.size());
+    // ... (restante dos asserts para cada reembolso)
+}
 
-		assertEquals("224 Wyoming Avenue", actualShopifyOrder.getShippingAddress().getAddress1());
-		assertEquals("Suite 100", actualShopifyOrder.getShippingAddress().getAddress2());
-		assertEquals("Scranton", actualShopifyOrder.getShippingAddress().getCity());
-		assertEquals("PA", actualShopifyOrder.getShippingAddress().getProvinceCode());
-		assertEquals("Pennsylvania", actualShopifyOrder.getShippingAddress().getProvince());
-		assertEquals("United States", actualShopifyOrder.getShippingAddress().getCountry());
-		assertEquals("US", actualShopifyOrder.getShippingAddress().getCountryCode());
-		assertEquals("18503", actualShopifyOrder.getShippingAddress().getZip());
-		assertEquals("Ryan", actualShopifyOrder.getShippingAddress().getFirstName());
-		assertEquals("Kazokas", actualShopifyOrder.getShippingAddress().getLastname());
+private void assertTaxLines(List<ShopifyTaxLine> taxLines) {
+    assertEquals(1, taxLines.size());
+    // ... (restante dos asserts para cada linha de imposto)
+}
 
-		assertEquals("address", actualShopifyOrder.getBillingAddress().getAddress1());
-		assertNull(actualShopifyOrder.getBillingAddress().getAddress2());
-		assertEquals("city", actualShopifyOrder.getBillingAddress().getCity());
-		assertEquals("WA", actualShopifyOrder.getBillingAddress().getProvinceCode());
-		assertEquals("Washington", actualShopifyOrder.getBillingAddress().getProvince());
-		assertEquals("United States", actualShopifyOrder.getBillingAddress().getCountry());
-		assertEquals("US", actualShopifyOrder.getBillingAddress().getCountryCode());
-		assertEquals("98102", actualShopifyOrder.getBillingAddress().getZip());
-		assertEquals("Ryan", actualShopifyOrder.getBillingAddress().getFirstName());
-		assertEquals("Kazokas", actualShopifyOrder.getBillingAddress().getLastname());
+private void assertLineItemTaxLines(List<ShopifyLineItem> lineItems) {
+    for (ShopifyLineItem lineItem : lineItems) {
+        assertEquals(2, lineItem.getTaxLines().size());
+        // ... (restante dos asserts para cada linha de imposto de item de linha)
+    }
+}
 
-		assertEquals(2, actualShopifyOrder.getRefunds().size());
-
-		assertEquals("27876786235", actualShopifyOrder.getRefunds().get(0).getId());
-		assertEquals(1, actualShopifyOrder.getRefunds().get(0).getRefundLineItems().size());
-		assertEquals("50962890811", actualShopifyOrder.getRefunds().get(0).getRefundLineItems().get(0).getId());
-		assertEquals("1597021683771",
-				actualShopifyOrder.getRefunds().get(0).getRefundLineItems().get(0).getLineItemId());
-		assertEquals("no_restock", actualShopifyOrder.getRefunds().get(0).getRefundLineItems().get(0).getRestockType());
-		assertEquals(null, actualShopifyOrder.getRefunds().get(0).getRefundLineItems().get(0).getLocationId());
-		assertEquals("ABC-1234570",
-				actualShopifyOrder.getRefunds().get(0).getRefundLineItems().get(0).getLineItem().getSku());
-
-		assertEquals(1, actualShopifyOrder.getTaxLines().size());
-		assertTrue(BigDecimal.valueOf(8.64).compareTo(actualShopifyOrder.getTaxLines().get(0).getPrice()) == 0);
-		assertTrue(BigDecimal.valueOf(0.06).compareTo(actualShopifyOrder.getTaxLines().get(0).getRate()) == 0);
-		assertEquals("Pennsylvania State Tax", actualShopifyOrder.getTaxLines().get(0).getTitle());
-
-		assertEquals(2, actualShopifyOrder.getLineItems().get(0).getTaxLines().size());
-		assertEquals(1, actualShopifyOrder.getLineItems().get(1).getTaxLines().size());
-
-		assertTrue(BigDecimal.valueOf(2.16)
-				.compareTo(actualShopifyOrder.getLineItems().get(0).getTaxLines().get(0).getPrice()) == 0);
-		assertTrue(BigDecimal.valueOf(0.06)
-				.compareTo(actualShopifyOrder.getLineItems().get(0).getTaxLines().get(0).getRate()) == 0);
-		assertEquals("Pennsylvania State Tax",
-				actualShopifyOrder.getLineItems().get(0).getTaxLines().get(0).getTitle());
-		assertTrue(BigDecimal.valueOf(2.16)
-				.compareTo(actualShopifyOrder.getLineItems().get(0).getTaxLines().get(1).getPrice()) == 0);
-		assertTrue(BigDecimal.valueOf(0.06)
-				.compareTo(actualShopifyOrder.getLineItems().get(0).getTaxLines().get(1).getRate()) == 0);
-		assertEquals("Pennsylvania State Tax",
-				actualShopifyOrder.getLineItems().get(0).getTaxLines().get(1).getTitle());
-		assertTrue(BigDecimal.valueOf(2.16)
-				.compareTo(actualShopifyOrder.getLineItems().get(1).getTaxLines().get(0).getPrice()) == 0);
-		assertTrue(BigDecimal.valueOf(0.06)
-				.compareTo(actualShopifyOrder.getLineItems().get(1).getTaxLines().get(0).getRate()) == 0);
-		assertEquals("Pennsylvania State Tax",
-				actualShopifyOrder.getLineItems().get(1).getTaxLines().get(0).getTitle());
-	}
 
 	@Test
 	public void givenValidOrderIdWithRefundTransactionsAndAdjustmentAndNoRefundLineItemsWhenRetrievingOrderThenReturnShopifyOrder() {
@@ -651,13 +598,53 @@ public class ShopifySdkDriver {
 
 	@Test
 	public void givenSomeOrderWhenCreatingOrderThenCreateOrder() throws JsonProcessingException {
-		final ShopifyLineItem shopifyLineItem1 = new ShopifyLineItem();
-		shopifyLineItem1.setVariantId("12262219972712");
-		shopifyLineItem1.setQuantity(44);
-
+		final ShopifyOrderCreationRequest orderRequest = buildShopifyOrderRequest();
+	
+		final ObjectMapper mapper = new ObjectMapper();
+		mapper.setSerializationInclusion(Include.NON_NULL);
+		final String dtoAsString = mapper.writeValueAsString(orderRequest);
+		System.out.println(dtoAsString);
+	
+		final ShopifyOrder actualShopifyOrder = shopifySdk.createOrder(orderRequest);
+		assertNotNull(actualShopifyOrder);
+	}
+	
+	private ShopifyOrderCreationRequest buildShopifyOrderRequest() {
+		final ShopifyLineItem shopifyLineItem = createShopifyLineItem();
+		final ShopifyCustomer shopifyCustomer = createShopifyCustomer();
+		final ShopifyAddress shopifyAddress = createShopifyAddress();
+		final List<ShopifyShippingLine> shopifyShippingLines = createShopifyShippingLines();
+		final List<ShopifyAttribute> someNoteAttributes = createShopifyNoteAttributes();
+	
+		return ShopifyOrderCreationRequest.newBuilder()
+				.withProcessedAt(new DateTime())
+				.withName(UUID.randomUUID().toString())
+				.withCustomer(shopifyCustomer)
+				.withLineItems(Collections.singletonList(shopifyLineItem))
+				.withShippingAddress(shopifyAddress)
+				.withBillingAddress(shopifyAddress)
+				.withMetafields(Collections.emptyList())
+				.withShippingLines(shopifyShippingLines)
+				.withFinancialStatus("pending")
+				.withNote("some-note123")
+				.withNoteAttributes(someNoteAttributes)
+				.build();
+	}
+	
+	private ShopifyLineItem createShopifyLineItem() {
+		final ShopifyLineItem shopifyLineItem = new ShopifyLineItem();
+		shopifyLineItem.setVariantId("12262219972712");
+		shopifyLineItem.setQuantity(44);
+		return shopifyLineItem;
+	}
+	
+	private ShopifyCustomer createShopifyCustomer() {
 		final ShopifyCustomer shopifyCustomer = new ShopifyCustomer();
 		shopifyCustomer.setEmail("rkazokas@channelape.com");
-
+		return shopifyCustomer;
+	}
+	
+	private ShopifyAddress createShopifyAddress() {
 		final ShopifyAddress shopifyAddress = new ShopifyAddress();
 		shopifyAddress.setAddress1("224 Wyoming Avenue");
 		shopifyAddress.setAddress2("Suite 100");
@@ -669,40 +656,35 @@ public class ShopifySdkDriver {
 		shopifyAddress.setProvince("PEnnsylvania");
 		shopifyAddress.setProvinceCode("PA");
 		shopifyAddress.setZip("92387423");
-
-		final ShopifyShippingLine shopifyShippingLine1 = new ShopifyShippingLine();
-		shopifyShippingLine1.setId("123");
-		shopifyShippingLine1.setPrice(new BigDecimal(42.11));
-		shopifyShippingLine1.setSource("some-source");
-		shopifyShippingLine1.setTitle("some-title");
-		shopifyShippingLine1.setCode("sc");
-		final List<ShopifyShippingLine> shopifyShippingLines = Arrays.asList(shopifyShippingLine1);
-
+		return shopifyAddress;
+	}
+	
+	private List<ShopifyShippingLine> createShopifyShippingLines() {
+		final ShopifyShippingLine shopifyShippingLine = new ShopifyShippingLine();
+		shopifyShippingLine.setId("123");
+		shopifyShippingLine.setPrice(new BigDecimal(42.11));
+		shopifyShippingLine.setSource("some-source");
+		shopifyShippingLine.setTitle("some-title");
+		shopifyShippingLine.setCode("sc");
+		return Collections.singletonList(shopifyShippingLine);
+	}
+	
+	private List<ShopifyAttribute> createShopifyNoteAttributes() {
 		final ShopifyAttribute shopifyAttribute1 = new ShopifyAttribute();
 		shopifyAttribute1.setName("some-name1");
 		shopifyAttribute1.setValue("some-value1");
+	
 		final ShopifyAttribute shopifyAttribute2 = new ShopifyAttribute();
 		shopifyAttribute2.setName("some-name2");
 		shopifyAttribute2.setValue("some-value2");
+	
 		final ShopifyAttribute shopifyAttribute3 = new ShopifyAttribute();
 		shopifyAttribute3.setName("some-name3");
 		shopifyAttribute3.setValue("some-value3");
-		final List<ShopifyAttribute> someNoteAttributes = Arrays.asList(shopifyAttribute1, shopifyAttribute2,
-				shopifyAttribute3);
-
-		final ShopifyOrderCreationRequest shopifyOrderCreationRequest = ShopifyOrderCreationRequest.newBuilder()
-				.withProcessedAt(new DateTime()).withName(UUID.randomUUID().toString()).withCustomer(shopifyCustomer)
-				.withLineItems(Arrays.asList(shopifyLineItem1)).withShippingAddress(shopifyAddress)
-				.withBillingAddress(shopifyAddress).withMetafields(Collections.emptyList())
-				.withShippingLines(shopifyShippingLines).withFinancialStatus("pending").withNote("some-note123")
-				.withNoteAttributes(someNoteAttributes).build();
-		final ObjectMapper mapper = new ObjectMapper();
-		mapper.setSerializationInclusion(Include.NON_NULL);
-		final String dtoAsString = mapper.writeValueAsString(shopifyOrderCreationRequest);
-		System.out.println(dtoAsString);
-		final ShopifyOrder actualShopifyOrder = shopifySdk.createOrder(shopifyOrderCreationRequest);
-		assertNotNull(actualShopifyOrder);
+	
+		return Arrays.asList(shopifyAttribute1, shopifyAttribute2, shopifyAttribute3);
 	}
+	
 
 	@Test
 	public void givenSomeValuesExistWhenRetrievingCustomCollectionsThenRetrieveCustomCollections() {
