@@ -1,5 +1,8 @@
 package com.shopify.model;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public enum MetafieldType {
 
 	SINGLE_LINE_TEXT("single_line_text_field"),
@@ -28,42 +31,37 @@ public enum MetafieldType {
 		this.type = type;
 	}
 
-	public static MetafieldType toEnum(final String type) {
-		if (SINGLE_LINE_TEXT.toString().equals(type) || STRING_TYPE.equalsIgnoreCase(type)) {
-			return MetafieldType.SINGLE_LINE_TEXT;
-		} else if (NUMBER_INTEGER.toString().equals(type) || INTEGER_TYPE.equalsIgnoreCase(type)) {
-			return MetafieldType.NUMBER_INTEGER;
-		} else if (MULTI_LINE_TEXT.toString().equals(type)) {
-			return MetafieldType.MULTI_LINE_TEXT;
-		} else if (PAGE_REFERENCE.toString().equals(type)) {
-			return MetafieldType.PAGE_REFERENCE;
-		} else if (PRODUCT_REFERENCE.toString().equals(type)) {
-			return MetafieldType.PRODUCT_REFERENCE;
-		} else if (FILE_REFERENCE.toString().equals(type)) {
-			return MetafieldType.FILE_REFERENCE;
-		} else if (DECIMAL.toString().equals(type)) {
-			return MetafieldType.DECIMAL;
-		} else if (DATE.toString().equals(type)) {
-			return MetafieldType.DATE;
-		} else if (DATE_AND_TIME.toString().equals(type)) {
-			return MetafieldType.DATE_AND_TIME;
-		} else if (URL.toString().equals(type)) {
-			return MetafieldType.URL;
-		} else if (JSON_STRING.toString().equals(type)) {
-			return MetafieldType.JSON_STRING;
-		} else if (BOOLEAN.toString().equals(type)) {
-			return MetafieldType.BOOLEAN;
-		} else if (WEIGHT.toString().equals(type)) {
-			return MetafieldType.WEIGHT;
-		} else if (VOLUME.toString().equals(type)) {
-			return MetafieldType.VOLUME;
-		} else if (DIMENSION.toString().equals(type)) {
-			return MetafieldType.DIMENSION;
-		} else if (RATING.toString().equals(type)) {
-			return MetafieldType.RATING;
-		}
-		throw new IllegalArgumentException(String.format(NO_MATCHING_ENUMS_ERROR_MESSAGE, type));
-	}
+	private static final Map<String, MetafieldType> TYPE_MAP = new HashMap<>();
+
+static {
+    TYPE_MAP.put(SINGLE_LINE_TEXT.toString(), MetafieldType.SINGLE_LINE_TEXT);
+    TYPE_MAP.put(STRING_TYPE.toLowerCase(), MetafieldType.SINGLE_LINE_TEXT);
+    TYPE_MAP.put(NUMBER_INTEGER.toString(), MetafieldType.NUMBER_INTEGER);
+    TYPE_MAP.put(INTEGER_TYPE.toLowerCase(), MetafieldType.NUMBER_INTEGER);
+    TYPE_MAP.put(MULTI_LINE_TEXT.toString(), MetafieldType.MULTI_LINE_TEXT);
+    TYPE_MAP.put(PAGE_REFERENCE.toString(), MetafieldType.PAGE_REFERENCE);
+    TYPE_MAP.put(PRODUCT_REFERENCE.toString(), MetafieldType.PRODUCT_REFERENCE);
+    TYPE_MAP.put(FILE_REFERENCE.toString(), MetafieldType.FILE_REFERENCE);
+    TYPE_MAP.put(DECIMAL.toString(), MetafieldType.DECIMAL);
+    TYPE_MAP.put(DATE.toString(), MetafieldType.DATE);
+    TYPE_MAP.put(DATE_AND_TIME.toString(), MetafieldType.DATE_AND_TIME);
+    TYPE_MAP.put(URL.toString(), MetafieldType.URL);
+    TYPE_MAP.put(JSON_STRING.toString(), MetafieldType.JSON_STRING);
+    TYPE_MAP.put(BOOLEAN.toString(), MetafieldType.BOOLEAN);
+    TYPE_MAP.put(WEIGHT.toString(), MetafieldType.WEIGHT);
+    TYPE_MAP.put(VOLUME.toString(), MetafieldType.VOLUME);
+    TYPE_MAP.put(DIMENSION.toString(), MetafieldType.DIMENSION);
+    TYPE_MAP.put(RATING.toString(), MetafieldType.RATING);
+}
+
+public static MetafieldType toEnum(final String type) {
+    MetafieldType metafieldType = TYPE_MAP.get(type);
+    if (metafieldType != null) {
+        return metafieldType;
+    }
+    throw new IllegalArgumentException(String.format(NO_MATCHING_ENUMS_ERROR_MESSAGE, type));
+}
+
 
 	@Override
 	public String toString() {
