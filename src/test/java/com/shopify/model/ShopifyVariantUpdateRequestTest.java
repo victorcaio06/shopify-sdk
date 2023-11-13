@@ -70,40 +70,68 @@ public class ShopifyVariantUpdateRequestTest {
 	}
 
 	@Test
-	public void givenAllNewValuesSetWhenBuildingShopifyVariantUpdateRequestThenExpectCorrectValues() {
+	public void testShopifyVariantUpdateRequestWithAllNewValuesSet() {
+		// Dados de teste
 		final ShopifyVariant currentShopifyVariant = buildCurrentShopifyVariant();
-
-		final ShopifyVariantUpdateRequest actualShopifyVariantUpdateRequest = ShopifyVariantUpdateRequest.newBuilder()
-				.withCurrentShopifyVariant(currentShopifyVariant).withPrice(SOME_NEW_PRICE_AMOUNT)
-				.withCompareAtPrice(SOME_NEW_COMPARE_AT_PRICE_AMOUNT).withSku(SOME_NEW_SKU)
-				.withBarcode(SOME_NEW_BARCODE).withWeight(SOME_NEW_GRAMS_AMOUNT).withAvailable(SOME_NEW_QUANTITY)
-				.withFirstOption(SOME_NEW_FIRST_OPTION).withSecondOption(SOME_NEW_SECOND_OPTION)
-				.withThirdOption(SOME_NEW_THIRD_OPTION).withImageSource(SOME_NEW_IMAGE_SOURCE)
-				.withInventoryManagement(SOME_NEW_INVENTORY_MANAGEMENT).withInventoryPolicy(SOME_NEW_INVENTORY_POLICY)
-				.withFulfillmentService(SOME_NEW_FULFILLMENT_SERVICE).withRequiresShipping(false).withTaxable(false)
-				.withSameInventoryItemId().build();
-
-		assertEquals(SOME_NEW_IMAGE_SOURCE, actualShopifyVariantUpdateRequest.getImageSource());
-		assertTrue(actualShopifyVariantUpdateRequest.hasImageSource());
-		assertTrue(actualShopifyVariantUpdateRequest.hasChanged());
-		final ShopifyVariant actualShopifyVariant = actualShopifyVariantUpdateRequest.getRequest();
-		assertNull(actualShopifyVariant.getImageId());
-		assertEquals(SOME_NEW_SKU, actualShopifyVariant.getSku());
-		assertEquals(SOME_NEW_BARCODE, actualShopifyVariant.getBarcode());
-		assertEquals(SOME_NEW_PRICE_AMOUNT.toPlainString(), actualShopifyVariant.getPrice().toPlainString());
-		assertEquals(SOME_NEW_COMPARE_AT_PRICE_AMOUNT.toPlainString(),
-				actualShopifyVariant.getCompareAtPrice().toPlainString());
-		assertEquals(406, actualShopifyVariant.getGrams());
-		assertEquals(SOME_NEW_QUANTITY, actualShopifyVariant.getAvailable());
-		assertEquals(SOME_NEW_FIRST_OPTION, actualShopifyVariant.getOption1());
-		assertEquals(SOME_NEW_SECOND_OPTION, actualShopifyVariant.getOption2());
-		assertEquals(SOME_NEW_THIRD_OPTION, actualShopifyVariant.getOption3());
-		assertEquals(SOME_NEW_INVENTORY_MANAGEMENT, actualShopifyVariant.getInventoryManagement());
-		assertEquals(SOME_NEW_INVENTORY_POLICY, actualShopifyVariant.getInventoryPolicy());
-		assertEquals(SOME_NEW_FULFILLMENT_SERVICE, actualShopifyVariant.getFulfillmentService());
-		assertFalse(actualShopifyVariant.isRequiresShipping());
-		assertFalse(actualShopifyVariant.isTaxable());
+	
+		// Executar a lógica de construção
+		final ShopifyVariantUpdateRequest actualShopifyVariantUpdateRequest = buildShopifyVariantUpdateRequestWithAllNewValues(currentShopifyVariant);
+	
+		// Verificações
+		assertShopifyVariantUpdateRequestWithAllNewValues(actualShopifyVariantUpdateRequest);
+	
+		// Verificações específicas para ShopifyVariant
+		assertShopifyVariantValuesWithAllNewValues(currentShopifyVariant, actualShopifyVariantUpdateRequest.getRequest());
 	}
+	
+	private ShopifyVariantUpdateRequest buildShopifyVariantUpdateRequestWithAllNewValues(ShopifyVariant currentShopifyVariant) {
+		return ShopifyVariantUpdateRequest.newBuilder()
+				.withCurrentShopifyVariant(currentShopifyVariant)
+				.withPrice(SOME_NEW_PRICE_AMOUNT)
+				.withCompareAtPrice(SOME_NEW_COMPARE_AT_PRICE_AMOUNT)
+				.withSku(SOME_NEW_SKU)
+				.withBarcode(SOME_NEW_BARCODE)
+				.withWeight(SOME_NEW_GRAMS_AMOUNT)
+				.withAvailable(SOME_NEW_QUANTITY)
+				.withFirstOption(SOME_NEW_FIRST_OPTION)
+				.withSecondOption(SOME_NEW_SECOND_OPTION)
+				.withThirdOption(SOME_NEW_THIRD_OPTION)
+				.withImageSource(SOME_NEW_IMAGE_SOURCE)
+				.withInventoryManagement(SOME_NEW_INVENTORY_MANAGEMENT)
+				.withInventoryPolicy(SOME_NEW_INVENTORY_POLICY)
+				.withFulfillmentService(SOME_NEW_FULFILLMENT_SERVICE)
+				.withRequiresShipping(false)
+				.withTaxable(false)
+				.withSameInventoryItemId()
+				.build();
+	}
+	
+	private void assertShopifyVariantUpdateRequestWithAllNewValues(ShopifyVariantUpdateRequest updateRequest) {
+		// Verificações gerais para ShopifyVariantUpdateRequest
+		assertEquals(SOME_NEW_IMAGE_SOURCE, updateRequest.getImageSource());
+		assertTrue(updateRequest.hasImageSource());
+		assertTrue(updateRequest.hasChanged());
+	}
+	
+	private void assertShopifyVariantValuesWithAllNewValues(ShopifyVariant currentShopifyVariant, ShopifyVariant actual) {
+		// Verificações específicas para ShopifyVariant
+		assertNull(actual.getImageId());
+		assertEquals(SOME_NEW_SKU, actual.getSku());
+		assertEquals(SOME_NEW_BARCODE, actual.getBarcode());
+		assertEquals(SOME_NEW_PRICE_AMOUNT.toPlainString(), actual.getPrice().toPlainString());
+		assertEquals(SOME_NEW_COMPARE_AT_PRICE_AMOUNT.toPlainString(), actual.getCompareAtPrice().toPlainString());
+		assertEquals(406, actual.getGrams());
+		assertEquals(SOME_NEW_QUANTITY, actual.getAvailable());
+		assertEquals(SOME_NEW_FIRST_OPTION, actual.getOption1());
+		assertEquals(SOME_NEW_SECOND_OPTION, actual.getOption2());
+		assertEquals(SOME_NEW_THIRD_OPTION, actual.getOption3());
+		assertEquals(SOME_NEW_INVENTORY_MANAGEMENT, actual.getInventoryManagement());
+		assertEquals(SOME_NEW_INVENTORY_POLICY, actual.getInventoryPolicy());
+		assertEquals(SOME_NEW_FULFILLMENT_SERVICE, actual.getFulfillmentService());
+		assertFalse(actual.isRequiresShipping());
+		assertFalse(actual.isTaxable());
+	}
+	
 
 	@Test
 	public void givenAllNewValuesAndNoOptionsAndNoImageSetWhenBuildingShopifyVariantUpdateRequestWithNullPriceAndNullCompareAtPriceThenExpectCorrectValues() {
