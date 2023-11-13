@@ -24,8 +24,15 @@ public class ShopifyAddressTest {
 	private static final String SOME_ADDRESS_1 = "224 Wyoming Ave";
 
 	@Test
-	public void givenSomeValuesWhenBuildingShopifyAddressThenExpectCorrectValues() {
-
+	public void testShopifyAddressBuilding() {
+		// Dados de teste
+		final ShopifyAddress shopifyAddress = buildSampleShopifyAddress();
+	
+		// Verificações
+		assertShopifyAddressValues(shopifyAddress);
+	}
+	
+	private ShopifyAddress buildSampleShopifyAddress() {
 		final ShopifyAddress shopifyAddress = new ShopifyAddress();
 		shopifyAddress.setAddress1(SOME_ADDRESS_1);
 		shopifyAddress.setAddress2(SOME_ADDRESS_2);
@@ -41,7 +48,10 @@ public class ShopifyAddressTest {
 		shopifyAddress.setPhone(SOME_PHONE);
 		shopifyAddress.setProvince(SOME_PROVINCE);
 		shopifyAddress.setProvinceCode(SOME_PROVINCE_CODE);
-
+		return shopifyAddress;
+	}
+	
+	private void assertShopifyAddressValues(ShopifyAddress shopifyAddress) {
 		assertEquals(SOME_ADDRESS_1, shopifyAddress.getAddress1());
 		assertEquals(SOME_ADDRESS_2, shopifyAddress.getAddress2());
 		assertEquals(SOME_CITY, shopifyAddress.getCity());
@@ -55,7 +65,7 @@ public class ShopifyAddressTest {
 		assertEquals(SOME_PHONE, shopifyAddress.getPhone());
 		assertEquals(SOME_PROVINCE, shopifyAddress.getProvince());
 		assertEquals(SOME_PROVINCE_CODE, shopifyAddress.getProvinceCode());
-
 	}
+	
 
 }
