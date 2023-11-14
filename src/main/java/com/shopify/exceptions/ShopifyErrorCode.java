@@ -1,14 +1,11 @@
 package com.shopify.exceptions;
 
 import java.io.Serializable;
+import com.shopify.enums.Type;
 
 public class ShopifyErrorCode implements Serializable {
 
 	private static final long serialVersionUID = -3870975240510101019L;
-
-	public enum Type implements Serializable {
-		SHIPPING_ADDRESS, UNKNOWN
-	}
 
 	private final Type type;
 	private final String message;
@@ -25,5 +22,4 @@ public class ShopifyErrorCode implements Serializable {
 	public String getMessage() {
 		return message;
 	}
-
 }
